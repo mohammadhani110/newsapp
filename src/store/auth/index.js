@@ -6,7 +6,7 @@ import { axiosDEF, axiosJWT } from "../../hooks/useAxiosInterceptor";
 
 export const getUser = createAsyncThunk("auth/user", async (params) => {
   try {
-    const response = await axiosJWT.post("auth/user", params);
+    const response = await axiosJWT.post("/api/auth/user", params);
 
     console.log("response getUser -->", response);
 
@@ -27,7 +27,7 @@ export const getUser = createAsyncThunk("auth/user", async (params) => {
 
 export const signinAPI = createAsyncThunk("auth/signin", async (params) => {
   try {
-    const response = await axiosDEF.post("auth/login", params);
+    const response = await axiosDEF.post("/api/auth/login", params);
 
     console.log("response signinAPI -->", response);
 
@@ -46,26 +46,29 @@ export const signinAPI = createAsyncThunk("auth/signin", async (params) => {
   }
 });
 
-export const registerAPI = createAsyncThunk("auth/register", async (params) => {
-  try {
-    const response = await axiosDEF.post("/auth/register", params);
+export const registerAPI = createAsyncThunk(
+  "/api/auth/register",
+  async (params) => {
+    try {
+      const response = await axiosDEF.post("/auth/register", params);
 
-    console.log("response registerAPI -->", response);
+      console.log("response registerAPI -->", response);
 
-    return response.data;
-  } catch (error) {
-    if (
-      error &&
-      error?.response &&
-      error?.response?.data &&
-      error?.response?.data?.error
-    ) {
-      throw new Error(error?.response?.data?.error);
-    } else {
-      throw new Error("Registeration Failed");
+      return response.data;
+    } catch (error) {
+      if (
+        error &&
+        error?.response &&
+        error?.response?.data &&
+        error?.response?.data?.error
+      ) {
+        throw new Error(error?.response?.data?.error);
+      } else {
+        throw new Error("Registeration Failed");
+      }
     }
   }
-});
+);
 
 const initialState = {
   token: "",
@@ -138,15 +141,11 @@ export const auth = createSlice({
     builder.addCase(getUser.fulfilled, (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      state.token = action.payload.token;
-      state.refreshToken = action.payload.refreshToken;
       state.error = null;
     });
     builder.addCase(getUser.rejected, (state, action) => {
       state.loading = false;
       state.user = null;
-      state.token = "";
-      state.refreshToken = "";
       state.error = action.error;
     });
   },

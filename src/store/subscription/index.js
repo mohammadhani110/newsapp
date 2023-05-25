@@ -10,7 +10,7 @@ export const getSubscription = createAsyncThunk(
   async (data) => {
     try {
       console.log("data subscription", data);
-      const response = await axiosJWT.post(`/create-subscription`, data);
+      const response = await axiosJWT.post(`/api/create-subscription`, data);
 
       return response.data;
     } catch (error) {

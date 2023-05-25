@@ -7,7 +7,7 @@ import { axiosJWT } from "../../hooks/useAxiosInterceptor";
 // ** Fetch getLatestNews
 export const getLatestNews = createAsyncThunk("newsSlice/latest", async () => {
   try {
-    const response = await axiosJWT.get("/news/latest");
+    const response = await axiosJWT.get("/api/news/latest");
 
     return response.data;
   } catch (error) {
@@ -26,7 +26,7 @@ export const getLatestNews = createAsyncThunk("newsSlice/latest", async () => {
 // ** Fetch getTopNews
 export const getTopNews = createAsyncThunk("newsSlice/top", async () => {
   try {
-    const response = await axiosJWT.get("/news/top");
+    const response = await axiosJWT.get("/api/news/top");
 
     return response.data;
   } catch (error) {
@@ -47,7 +47,7 @@ export const getNewsByCategory = createAsyncThunk(
   "newsSlice/newsByCategory",
   async (category) => {
     try {
-      const response = await axiosJWT.get(`/news/by-category/${category}`);
+      const response = await axiosJWT.get(`/api/news/by-category/${category}`);
 
       return response.data;
     } catch (error) {
@@ -69,7 +69,7 @@ export const getFullArticle = createAsyncThunk(
   "newsSlice/fullArticle",
   async (url) => {
     try {
-      const response = await axiosJWT.post(`/news/get-content`, { url });
+      const response = await axiosJWT.post(`/api/news/get-content`, { url });
 
       return response.data;
     } catch (error) {
@@ -91,7 +91,7 @@ export const getCategories = createAsyncThunk(
   "newsSlice/categories",
   async () => {
     try {
-      const response = await axiosJWT.get("/news/categories");
+      const response = await axiosJWT.get("/api/news/categories");
 
       return response.data;
     } catch (error) {
@@ -114,7 +114,7 @@ export const getNewsSummary = createAsyncThunk(
   "newsSlice/summary",
   async (article) => {
     try {
-      const response = await axiosJWT.post(`/news/summary`, { article });
+      const response = await axiosJWT.post(`/api/news/summary`, { article });
 
       return response.data;
     } catch (error) {

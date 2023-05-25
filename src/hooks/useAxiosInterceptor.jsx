@@ -3,10 +3,9 @@ import { clearPersist, store } from "../store";
 import { resetAuthUserAction, setTokenAction } from "../store/auth";
 import isEmpty from "../utils/isEmpty";
 import { toast } from "react-hot-toast";
-// import toast from "react-hot-toast";
+import { BASE_URL } from "../utils/constants";
 
-// const BASE_URL = process.env.CLIENT_URL;
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5000/api";
+// const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5000/api";
 const axiosDEF = axios.create({ baseURL: BASE_URL });
 const axiosJWT = axios.create({ baseURL: BASE_URL });
 
@@ -26,7 +25,9 @@ const refreshUserToken = async () => {
     //   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NjkyZmUwMTZjYzRjZWIyNDE4NDM0ZiIsImlhdCI6MTY4NDcyOTg2MywiZXhwIjoxNjg3MzIxODYzfQ.J9SN6VZmV2iL2IOhiw8cqwfxB4dm8hD7h1aYQB1exyE";
     const refreshToken = store.getState().auth.refreshToken;
     console.error("refreshUserToken ", refreshToken);
-    const response = await axiosJWT.post("/refresh-token", { refreshToken });
+    const response = await axiosJWT.post("/api/refresh-token", {
+      refreshToken,
+    });
     console.log("response.data", response);
 
     if (response?.data?.accessToken)

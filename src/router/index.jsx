@@ -22,8 +22,12 @@ const BlogByCategory = React.lazy(() => import("../pages/blog-by-category"));
 const Login = React.lazy(() => import("../pages/login"));
 const Register = React.lazy(() => import("../pages/register"));
 
-function ProtectedRoute({ isAuthenticated, isSubscribed }) {
-  if (isAuthenticated && isSubscribed) {
+function ProtectedRoute({
+  isAuthenticated,
+  isSubscribed,
+  subscriptionPage = false,
+}) {
+  if (isAuthenticated && isSubscribed && !subscriptionPage) {
     return (
       <Suspense fallback={<Loader />}>
         <div>
@@ -73,12 +77,13 @@ function UnAuthenticatedRoute({
     return <Navigate to="/" />;
   } else if (isAuthenticated && !isSubscribed) {
     return <Navigate to="/subscription" />;
+  } else if (!isAuthenticated && !isSubscribed) {
+    return (
+      <Suspense fallback={<Loader />}>
+        <Component />
+      </Suspense>
+    );
   }
-  return (
-    <Suspense fallback={<Loader />}>
-      <Component />
-    </Suspense>
-  );
 }
 
 function RouterIndex() {
@@ -161,6 +166,7 @@ function RouterIndex() {
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
                 isSubscribed={isSubscribed}
+                subscriptionPage={true}
               />
             }
           >
