@@ -9,7 +9,7 @@ import {
   useScrollTrigger,
   styled,
 } from "@mui/material";
-import Menu from 'mdi-material-ui/Menu'
+import Menu from "mdi-material-ui/Menu";
 
 import NavigationDrawer from "../components/NavigationDrawer";
 
@@ -37,7 +37,7 @@ function HideOnScroll(props) {
   );
 }
 
-export default function NavbarMobile() {
+export default function NavbarMobile({ subscriptionPage }) {
   // const classes = useStyles()
   // const scrollPosition = useScrollPosition();
   const [openDrawer, setOpenDrawer] = React.useState(false);
@@ -65,7 +65,11 @@ export default function NavbarMobile() {
               </IconButton>
 
               {openDrawer && (
-                <NavigationDrawer open={openDrawer} setOpen={setOpenDrawer} />
+                <NavigationDrawer
+                  open={openDrawer}
+                  setOpen={setOpenDrawer}
+                  subscriptionPage={subscriptionPage}
+                />
               )}
             </CustomToolbar>
           </Container>

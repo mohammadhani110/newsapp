@@ -10,10 +10,11 @@ import {
 import { NavLink, useLocation } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-
 //assets
-import user from "../assets/user.png";
+
 import SearchBar from "./SearchBar";
+import DropdownMenu from "./DropdownMenu";
+
 // import { useScrollPosition } from "../hooks/useScrollPosition";
 
 const CustomLink = styled(NavLink, {
@@ -61,13 +62,102 @@ const categories = [
   "technology",
 ];
 
-export default function Navbar() {
+export default function Navbar({ subscriptionPage }) {
   const location = useLocation();
   const theme = useTheme();
   // const scrollPosition = useScrollPosition();
   const handleSearch = (data) => {
     console.log(data);
   };
+  if (subscriptionPage) {
+    return (
+      <AppBar
+        position="sticky"
+        sx={{ background: "white" }}
+        elevation={0}
+        // className={`${scrollPosition > 0 ? "white" : "transparent"}`}
+      >
+        <Container
+          maxWidth="xl"
+          sx={{
+            marginTop: subscriptionPage ? "0" : "3rem",
+            marginBottom: subscriptionPage ? "0" : "3rem",
+            padding: 0,
+          }}
+        >
+          <Toolbar
+            className={`toolbar `}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "space-around",
+              gap: "2rem",
+            }}
+          >
+            {/* primary nav */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "2rem",
+                width: "100%",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "2rem",
+                }}
+              >
+                <CustomLink to={`/`}>
+                  <Typography
+                    variant="h6"
+                    component="h2"
+                    sx={{ flexGrow: 0, textAlign: "center" }}
+                    color={"primary"}
+                    gutterBottom
+                  >
+                    NEWS APP
+                  </Typography>
+                </CustomLink>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "3rem",
+                  [theme.breakpoints.down(1200)]: {
+                    gap: "2rem",
+                  },
+                }}
+              >
+                <DropdownMenu />
+                {/* 
+                <Button
+                  variant="outlined"
+                  sx={{
+                    width: "174px",
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    [theme.breakpoints.down(1200)]: {
+                      width: "144px",
+                    },
+                  }}
+                >
+                  Subscribe
+                </Button> */}
+              </Box>
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+    );
+  }
   return (
     // <Box sx={{ flexGrow: 0 }}>
     <>
@@ -108,15 +198,17 @@ export default function Navbar() {
                   gap: "2rem",
                 }}
               >
-                <Typography
-                  variant="h6"
-                  component="h2"
-                  sx={{ flexGrow: 0, textAlign: "center" }}
-                  color={"primary"}
-                  gutterBottom
-                >
-                  NEWS APP
-                </Typography>
+                <CustomLink to={`/`}>
+                  <Typography
+                    variant="h6"
+                    component="h2"
+                    sx={{ flexGrow: 0, textAlign: "center" }}
+                    color={"primary"}
+                    gutterBottom
+                  >
+                    NEWS APP
+                  </Typography>
+                </CustomLink>
 
                 <Box>
                   <SearchBar placeholder="Search..." onSearch={handleSearch} />
@@ -134,18 +226,7 @@ export default function Navbar() {
                   },
                 }}
               >
-                <CustomLink to="/register">
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: ".5rem",
-                    }}
-                  >
-                    <img src={user} alt="signup" /> Signup
-                  </Box>
-                </CustomLink>
+                <DropdownMenu />
 
                 <Button
                   variant="outlined"
@@ -158,7 +239,7 @@ export default function Navbar() {
                     },
                   }}
                 >
-                  Learn more
+                  Subscribe
                 </Button>
               </Box>
             </Box>
@@ -182,10 +263,11 @@ export default function Navbar() {
                 {categories.map((category, i) => {
                   return (
                     <CustomLink
-                      to={`/${category}`}
+                      to={`/category/${category}`}
+                      key={Math.random() * 100000}
                       isActive={location?.pathname === category ? "active" : ""}
                     >
-                      {category.toUpperCase}
+                      {category?.toUpperCase()}
                     </CustomLink>
                   );
                 })}

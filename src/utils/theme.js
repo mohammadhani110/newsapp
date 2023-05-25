@@ -22,6 +22,11 @@ export let theme = createTheme({
     green: createColor("#00A046"),
     success: {
       main: "#00BFA6",
+      secondary: "#dcfffa",
+    },
+    error: {
+      main: "#d32f2f",
+      secondary: "#ffe3e3",
     },
     background: {
       default: "#fff",
@@ -87,7 +92,6 @@ theme = createTheme(theme, {
     MuiContainer: {
       styleOverrides: {
         maxWidthLg: {
-         
           // Note that you can customize other properties here, like padding, color, .etc.
         },
       },

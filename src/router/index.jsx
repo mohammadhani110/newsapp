@@ -1,4 +1,5 @@
 import * as React from "react";
+import { store } from "../store";
 import { Suspense } from "react";
 import {
   BrowserRouter,
@@ -10,16 +11,19 @@ import {
 import Loader from "../components/Loader";
 import Error404 from "../pages/error404";
 import Header from "../components/Header";
+import isEmpty from "../utils/isEmpty";
+import { useSelector } from "react-redux";
 // import useAuth from "../hooks/useAuth";
 
 const Home = React.lazy(() => import("../pages/home"));
 const Subscription = React.lazy(() => import("../pages/subscription"));
 const BlogDetails = React.lazy(() => import("../pages/blog-details"));
+const BlogByCategory = React.lazy(() => import("../pages/blog-by-category"));
 const Login = React.lazy(() => import("../pages/login"));
 const Register = React.lazy(() => import("../pages/register"));
 
-function ProtectedRoute({ isAuthenticated, subscribed }) {
-  if (isAuthenticated === true && subscribed) {
+function ProtectedRoute({ isAuthenticated, isSubscribed }) {
+  if (isAuthenticated && isSubscribed) {
     return (
       <Suspense fallback={<Loader />}>
         <div>
@@ -28,8 +32,15 @@ function ProtectedRoute({ isAuthenticated, subscribed }) {
         </div>
       </Suspense>
     );
-  } else if (isAuthenticated === true && !subscribed) {
-    return <Navigate to="/subscription" />;
+  } else if (isAuthenticated && !isSubscribed) {
+    return (
+      <Suspense fallback={<Loader />}>
+        <div>
+          <Header subscriptionPage={true} />
+          <Outlet />
+        </div>
+      </Suspense>
+    );
   }
   return <Navigate to="/login" />;
 }
@@ -56,11 +67,11 @@ function ProtectedRoute({ isAuthenticated, subscribed }) {
 function UnAuthenticatedRoute({
   component: Component,
   isAuthenticated,
-  subscribed,
+  isSubscribed,
 }) {
-  if (isAuthenticated === true && subscribed) {
+  if (isAuthenticated && isSubscribed) {
     return <Navigate to="/" />;
-  } else if (isAuthenticated === true && !subscribed) {
+  } else if (isAuthenticated && !isSubscribed) {
     return <Navigate to="/subscription" />;
   }
   return (
@@ -71,9 +82,12 @@ function UnAuthenticatedRoute({
 }
 
 function RouterIndex() {
-  //   const { isAuthenticated } = useAuth();
-  const isAuthenticated = true;
-  const subscribed = true;
+  const isAuthenticated = useSelector((state) => state.auth?.isAuthenticated);
+  const isSubscribed = useSelector((state) => state.auth?.user?.isSubscribed);
+  // const isAuthenticated = true;
+  // const isSubscribed = false;
+
+  React.useEffect(() => {}, [isAuthenticated, isSubscribed]);
   return (
     <>
       <BrowserRouter>
@@ -85,7 +99,7 @@ function RouterIndex() {
               <UnAuthenticatedRoute
                 component={Login}
                 isAuthenticated={isAuthenticated}
-                subscribed={subscribed}
+                isSubscribed={isSubscribed}
               />
             }
           />
@@ -96,7 +110,7 @@ function RouterIndex() {
               <UnAuthenticatedRoute
                 component={Register}
                 isAuthenticated={isAuthenticated}
-                subscribed={subscribed}
+                isSubscribed={isSubscribed}
               />
             }
           />
@@ -106,7 +120,7 @@ function RouterIndex() {
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
-                subscribed={subscribed}
+                isSubscribed={isSubscribed}
               />
             }
           >
@@ -114,11 +128,27 @@ function RouterIndex() {
           </Route>
           <Route
             exact
+            path="/category/:category"
+            element={
+              <ProtectedRoute
+                isAuthenticated={isAuthenticated}
+                isSubscribed={isSubscribed}
+              />
+            }
+          >
+            <Route
+              exact
+              path="/category/:category"
+              element={<BlogByCategory />}
+            />
+          </Route>
+          <Route
+            exact
             path="/blog/:id"
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
-                subscribed={subscribed}
+                isSubscribed={isSubscribed}
               />
             }
           >
@@ -130,11 +160,11 @@ function RouterIndex() {
             element={
               <ProtectedRoute
                 isAuthenticated={isAuthenticated}
-                subscribed={subscribed}
+                isSubscribed={isSubscribed}
               />
             }
           >
-            <Route path="/subscription" element={<Subscription />} />
+            <Route exact path="/subscription" element={<Subscription />} />
           </Route>
           {/* <Route exact path='/location' element={<ProtectedRoute isAuthenticated={isAuthenticated} path="/location" />}>
                         <Route path='/location' element={<FindLocation />} />

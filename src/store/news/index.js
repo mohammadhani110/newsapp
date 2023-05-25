@@ -4,10 +4,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // ** Axios Imports
 import { axiosJWT } from "../../hooks/useAxiosInterceptor";
 
-// ** Fetch Users
-export const fetchNews = createAsyncThunk("news/fetchNews", async () => {
+// ** Fetch getLatestNews
+export const getLatestNews = createAsyncThunk("newsSlice/latest", async () => {
   try {
-    const response = await axiosJWT.get("/admin/users");
+    const response = await axiosJWT.get("/news/latest");
 
     return response.data;
   } catch (error) {
@@ -19,17 +19,35 @@ export const fetchNews = createAsyncThunk("news/fetchNews", async () => {
     ) {
       throw new Error(error?.response?.data?.error);
     } else {
-      throw new Error("Unable to fetch users");
+      throw new Error("Unable to fetch latest news ");
     }
   }
 });
+// ** Fetch getTopNews
+export const getTopNews = createAsyncThunk("newsSlice/top", async () => {
+  try {
+    const response = await axiosJWT.get("/news/top");
 
-// ** Get User Details
-export const getUserDetails = createAsyncThunk(
-  "news/getUserDetails",
-  async (id) => {
+    return response.data;
+  } catch (error) {
+    if (
+      error &&
+      error?.response &&
+      error?.response?.data &&
+      error?.response?.data?.error
+    ) {
+      throw new Error(error?.response?.data?.error);
+    } else {
+      throw new Error("Unable to fetch top news");
+    }
+  }
+});
+// ** Fetch getNewsByCategory
+export const getNewsByCategory = createAsyncThunk(
+  "newsSlice/newsByCategory",
+  async (category) => {
     try {
-      const response = await axiosJWT.get(`/admin/user/${id}`);
+      const response = await axiosJWT.get(`/news/by-category/${category}`);
 
       return response.data;
     } catch (error) {
@@ -41,19 +59,62 @@ export const getUserDetails = createAsyncThunk(
       ) {
         throw new Error(error?.response?.data?.error);
       } else {
-        throw new Error("Unable to get user details");
+        throw new Error("Unable to fetch news by category");
+      }
+    }
+  }
+);
+// ** Fetch getFullArticle
+export const getFullArticle = createAsyncThunk(
+  "newsSlice/fullArticle",
+  async (url) => {
+    try {
+      const response = await axiosJWT.post(`/news/get-content`, { url });
+
+      return response.data;
+    } catch (error) {
+      if (
+        error &&
+        error?.response &&
+        error?.response?.data &&
+        error?.response?.data?.error
+      ) {
+        throw new Error(error?.response?.data?.error);
+      } else {
+        throw new Error("Unable to get fullArticle");
+      }
+    }
+  }
+);
+// ** Fetch getCategories
+export const getCategories = createAsyncThunk(
+  "newsSlice/categories",
+  async () => {
+    try {
+      const response = await axiosJWT.get("/news/categories");
+
+      return response.data;
+    } catch (error) {
+      if (
+        error &&
+        error?.response &&
+        error?.response?.data &&
+        error?.response?.data?.error
+      ) {
+        throw new Error(error?.response?.data?.error);
+      } else {
+        throw new Error("Unable to fetch users");
       }
     }
   }
 );
 
-// ** Add User
-export const addUser = createAsyncThunk(
-  "news/addUser",
-  async (data, { dispatch }) => {
+// ** Fetch getNewsSummary
+export const getNewsSummary = createAsyncThunk(
+  "newsSlice/summary",
+  async (article) => {
     try {
-      const response = await axiosJWT.post("/api/admin/user", data);
-      dispatch(fetchNews());
+      const response = await axiosJWT.post(`/news/summary`, { article });
 
       return response.data;
     } catch (error) {
@@ -65,51 +126,125 @@ export const addUser = createAsyncThunk(
       ) {
         throw new Error(error?.response?.data?.error);
       } else {
-        throw new Error("Unable to add user");
+        throw new Error("Unable to fetch users");
       }
     }
   }
 );
 
 const initialState = {
-  data: [],
-  details: null,
+  top: [],
+  latest: [],
+  categories: [],
+  newsByCategories: [],
+  details: {
+    newsId: null,
+    url: "",
+    summary: null,
+    content: null,
+  },
   error: null,
   isLoading: false,
+  errorSidebar: null,
+  isLoadingSidebar: false,
 };
 export const newsSlice = createSlice({
-  name: "news",
+  name: "newsSlice",
   initialState,
-  reducers: {},
+  reducers: {
+    setIdAction(state, action) {
+      state.details.newsId = action.payload;
+    },
+    setURLAction(state, action) {
+      state.details.url = action.payload;
+    },
+  },
   extraReducers: (builder) => {
-    // fetchNews
-    builder.addCase(fetchNews.pending, (state) => {
+    // getLatestNews
+    builder.addCase(getLatestNews.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchNews.fulfilled, (state, action) => {
-      state.data = action.payload;
+    builder.addCase(getLatestNews.fulfilled, (state, action) => {
+      state.latest = action.payload;
       state.isLoading = false;
       state.error = null;
     });
-    builder.addCase(fetchNews.rejected, (state, action) => {
+    builder.addCase(getLatestNews.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error;
     });
 
-    // getUserDetails
-    builder.addCase(getUserDetails.pending, (state) => {
+    // getTopNews
+    builder.addCase(getTopNews.pending, (state) => {
+      state.isLoadingSidebar = true;
+    });
+    builder.addCase(getTopNews.fulfilled, (state, action) => {
+      state.top = action.payload;
+      state.isLoadingSidebar = false;
+      state.errorSidebar = null;
+    });
+    builder.addCase(getTopNews.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorSidebar = action.error;
+    });
+
+    // getNewsByCategory
+    builder.addCase(getNewsByCategory.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(getUserDetails.fulfilled, (state, action) => {
-      state.details = action.payload;
+    builder.addCase(getNewsByCategory.fulfilled, (state, action) => {
+      state.newsByCategories = action.payload;
       state.isLoading = false;
       state.error = null;
     });
-    builder.addCase(getUserDetails.rejected, (state, action) => {
+    builder.addCase(getNewsByCategory.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error;
+    });
+
+    // getCategories
+    builder.addCase(getCategories.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getCategories.fulfilled, (state, action) => {
+      state.categories = action.payload;
+      state.isLoading = false;
+      state.error = null;
+    });
+    builder.addCase(getCategories.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error;
+    });
+
+    // getFullArticle
+    builder.addCase(getFullArticle.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getFullArticle.fulfilled, (state, action) => {
+      state.details.content = action.payload?.content;
+      state.isLoading = false;
+      state.error = null;
+    });
+    builder.addCase(getFullArticle.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error;
+    });
+
+    // getNewsSummary
+    builder.addCase(getNewsSummary.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getNewsSummary.fulfilled, (state, action) => {
+      state.details.summary = action.payload;
+      state.isLoading = false;
+      state.error = null;
+    });
+    builder.addCase(getNewsSummary.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error;
     });
   },
 });
+export const { setIdAction, setURLAction } = newsSlice.actions;
 
 export default newsSlice.reducer;

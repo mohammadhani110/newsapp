@@ -33,7 +33,9 @@ import { useDispatch } from "react-redux";
 
 // ** Layout Import
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import isEmpty from "../../utils/isEmpty";
 
 // ** Demo Imports
 
@@ -48,12 +50,11 @@ const RightWrapper = styled(Box)(() => ({
   // }
 }));
 
-const BoxWrapper = styled(Box)(() => ({
-  // width: '100%',
-  // [theme.breakpoints.down('md')]: {
-  //   maxWidth: 400
-  // }
+const BoxWrapper = styled(Box)(({ theme }) => ({
   maxWidth: 400,
+  [theme.breakpoints.down("md")]: {
+    width: "100%",
+  },
 }));
 
 const TypographyStyled = styled(Typography)(({ theme }) => ({
@@ -81,8 +82,11 @@ const Login = () => {
   const [error, setError] = useState("");
 
   // ** Hooks
+  const isSubscribed = useSelector((state) => state.auth?.user?.isSubscribed);
+  const isLoading = useSelector((state) => state.auth?.isLoading);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   // ** Vars
@@ -101,8 +105,22 @@ const Login = () => {
     console.log("data", data);
     const { error } = await dispatch(signinAPI(data));
     console.log("onSubmit error", error);
-    if (error && error.length > 0) {
-      setError(error);
+    if (!isEmpty(error)) {
+      setError(error?.message);
+      toast.error(error?.message, {
+        position: "bottom-right",
+        duration: 5000,
+      });
+
+      return;
+    }
+    toast.success("Login Successful!", {
+      position: "bottom-right",
+      duration: 5000,
+    });
+    if (isSubscribed) navigate("/");
+    else {
+      navigate("/subscription");
     }
   };
 
@@ -133,6 +151,7 @@ const Login = () => {
                   alignItems: "center",
                   py: 3,
                   mb: 6,
+                  backgroundColor: "error.secondary",
                   "& .MuiAlert-message": { p: 0 },
                   "& .MuiAlert-icon": { color: "error.main" },
                 }}
@@ -220,7 +239,8 @@ const Login = () => {
                 type="submit"
                 variant="contained"
                 sx={{ mb: 7, mt: 2 }}
-                loading={isSubmitting}
+                loading={isSubmitting || isLoading}
+                disabled={isSubmitting || isLoading}
               >
                 Login
               </LoadingButton>
