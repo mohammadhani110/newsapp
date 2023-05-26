@@ -33,13 +33,14 @@ export const signinAPI = createAsyncThunk("auth/signin", async (params) => {
 
     return response.data;
   } catch (error) {
+    console.log(error);
     if (
       error &&
       error?.response &&
       error?.response?.data &&
-      error?.response?.data?.error
+      error?.response?.data?.message
     ) {
-      throw new Error(error?.response?.data?.error);
+      throw new Error(error?.response?.data?.message);
     } else {
       throw new Error("Login Failed");
     }
@@ -50,7 +51,7 @@ export const registerAPI = createAsyncThunk(
   "/api/auth/register",
   async (params) => {
     try {
-      const response = await axiosDEF.post("/auth/register", params);
+      const response = await axiosDEF.post("/api/auth/register", params);
 
       console.log("response registerAPI -->", response);
 
@@ -60,9 +61,9 @@ export const registerAPI = createAsyncThunk(
         error &&
         error?.response &&
         error?.response?.data &&
-        error?.response?.data?.error
+        error?.response?.data?.message
       ) {
-        throw new Error(error?.response?.data?.error);
+        throw new Error(error?.response?.data?.message);
       } else {
         throw new Error("Registeration Failed");
       }
