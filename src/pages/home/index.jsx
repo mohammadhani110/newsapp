@@ -6,7 +6,11 @@ import Sidebar from "../../components/Sidebar";
 import BlogPostList from "../../components/BlogPostList";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getTopNews, getLatestNews } from "../../store/news";
+import {
+  getTopNews,
+  getLatestNews,
+  resetNewsDetailsAction,
+} from "../../store/news";
 
 // const blogPost = {
 //   title: "The Importance of Regular Exercise",
@@ -43,6 +47,7 @@ const Home = () => {
   useEffect(() => {
     if (top?.length <= 0) dispatch(getTopNews());
     if (latest?.length <= 0) dispatch(getLatestNews());
+    dispatch(resetNewsDetailsAction());
   }, []);
 
   return (

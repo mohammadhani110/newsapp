@@ -12,8 +12,6 @@ const BlogPostList = ({ newsType }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     console.log("BlogPostList");
-    console.log("allNews", allNews);
-    console.log("categoryNews", categoryNews);
   }, [allNews, categoryNews]);
   // const image = "https://picsum.photos/400";
   if (isLoading) {
@@ -37,6 +35,7 @@ const BlogPostList = ({ newsType }) => {
       </>
     );
   }
+
   return (
     <>
       {allNews &&

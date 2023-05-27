@@ -162,6 +162,13 @@ export const newsSlice = createSlice({
     setNewsDetailsDataAction(state, action) {
       state.details.data = action.payload;
     },
+    resetNewsDetailsAction(state, action) {
+      state.details.newsId = "";
+      state.details.url = "";
+      state.details.data = null;
+      state.details.summary = "";
+      state.details.content = "";
+    },
   },
   extraReducers: (builder) => {
     // getLatestNews
@@ -249,7 +256,11 @@ export const newsSlice = createSlice({
     });
   },
 });
-export const { setIdAction, setURLAction, setNewsDetailsDataAction } =
-  newsSlice.actions;
+export const {
+  setIdAction,
+  setURLAction,
+  setNewsDetailsDataAction,
+  resetNewsDetailsAction,
+} = newsSlice.actions;
 
 export default newsSlice.reducer;

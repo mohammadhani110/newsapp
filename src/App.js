@@ -15,6 +15,7 @@ const App = () => {
 
   useEffect(() => {
     initializeAxios();
+    window.localStorage.setItem("retry", "0");
   }, []);
 
   return (

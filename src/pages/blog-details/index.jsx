@@ -149,7 +149,7 @@ const BlogDetailsPage = () => {
           </Typography>
         </StyledPaper>
       )} */}
-      {!isEmpty(newsData) && getContent(newsData)}
+      {!isEmpty(newsData) && getContent()}
       {toggle && summarizeText && (
         <>
           <Typography variant="h4">Summary</Typography>

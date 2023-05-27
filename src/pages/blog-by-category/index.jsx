@@ -6,7 +6,7 @@ import Sidebar from "../../components/Sidebar";
 import BlogPostList from "../../components/BlogPostList";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { getNewsByCategory } from "../../store/news";
+import { getNewsByCategory, resetNewsDetailsAction } from "../../store/news";
 
 const BlogPostPageWrapper = styled(Grid)(({ theme }) => ({
   flexGrow: 1,
@@ -32,6 +32,7 @@ const Home = () => {
       dispatch(getNewsByCategory(location?.pathname?.split("/category/")[1]));
       retryCount++;
     }
+    dispatch(resetNewsDetailsAction());
   }, [location?.pathname]);
 
   return (

@@ -58,14 +58,15 @@ export const useAxiosInterceptor = () => {
     axiosJWT.interceptors.response.use(
       (response) => response,
       async (error) => {
-        const retryCount = window.localStorage.getItem("retry");
-
+        const retryCount = localStorage.getItem("retry");
+        console.log("retryCount-->", retryCount);
+        console.log("error retrying-->", error);
         // return Promise.reject((error.response && error.response?.data) || 'Something went wrong');
         const originalRequest = error.config;
         if (error?.response?.status === 403 && retryCount === "1") {
           console.log("Session has been expired");
 
-          window.localStorage.setItem("retry", "0");
+          localStorage.setItem("retry", "0");
           await logoutSession(true);
 
           return Promise.reject(error);
@@ -85,7 +86,7 @@ export const useAxiosInterceptor = () => {
           originalRequest._retry = true;
           originalRequest.headers.Authorization = `Bearer ${token}`;
 
-          window.localStorage.setItem("retry", "1");
+          localStorage.setItem("retry", "1");
 
           // UPDATE USER TOKEN
           return axios(originalRequest);

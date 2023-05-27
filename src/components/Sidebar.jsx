@@ -3,7 +3,11 @@ import { Grid, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Loader from "./Loader";
-import { setNewsDetailsDataAction } from "../store/news";
+import {
+  setIdAction,
+  setNewsDetailsDataAction,
+  setURLAction,
+} from "../store/news";
 
 const Sidebar = () => {
   const top = useSelector((state) => state.news?.top?.articles);
@@ -22,7 +26,11 @@ const Sidebar = () => {
           <Grid item xs={12} key={article.title} mb={2}>
             <Link
               to={`/blog/${article.title.split(" ").join("-")}`}
-              onClick={() => dispatch(setNewsDetailsDataAction(article))}
+              onClick={() => {
+                dispatch(setIdAction(article.title.split(" ").join("-")));
+                dispatch(setURLAction(article.url));
+                dispatch(setNewsDetailsDataAction(article));
+              }}
               style={{ textDecoration: "none" }}
             >
               <Grid container alignItems="center" spacing={4}>
