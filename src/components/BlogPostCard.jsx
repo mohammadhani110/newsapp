@@ -10,7 +10,11 @@ import {
   Avatar,
   Typography,
 } from "@mui/material";
-import { setIdAction, setURLAction } from "../store/news";
+import {
+  setIdAction,
+  setNewsDetailsDataAction,
+  setURLAction,
+} from "../store/news";
 import { Link } from "react-router-dom";
 
 const BlogCard = styled(Card)(({ theme }) => ({
@@ -61,6 +65,7 @@ const BlogPostCard = ({ data, dispatch }) => {
       onClick={() => {
         dispatch(setIdAction(id));
         dispatch(setURLAction(url));
+        dispatch(setNewsDetailsDataAction(data));
       }}
     >
       <BlogCard elevation={0}>

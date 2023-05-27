@@ -24,23 +24,10 @@ const CustomLink = styled(NavLink, {
   textDecoration: "none",
 }));
 
-const navigation = [
-  { name: "Home", path: "/" },
-  { name: "Business", path: "/business" },
-  { name: "Entertainment", path: "/entertainment" },
-  { name: "General", path: "/general" },
-  { name: "Health", path: "/health" },
-  { name: "Science", path: "/science" },
-  { name: "Sports", path: "/sports" },
-  { name: "Technology", path: "/technology" },
-  { name: "Logout", path: "/logout" },
-  // { name: "Register", path: "/register" },
-  // { name: "Login", path: "/login" },
-];
-
 export default function NavigationDrawer({ open, setOpen, subscriptionPage }) {
   const location = useLocation();
   const dispatch = useDispatch();
+
   const logout = () => {
     dispatch(resetAuthUserAction());
     clearPersist();
@@ -54,7 +41,7 @@ export default function NavigationDrawer({ open, setOpen, subscriptionPage }) {
           onClose={() => setOpen(false)}
           transitionDuration={{ enter: 500, appear: 1000, exit: 500 }}
         >
-          {!subscriptionPage && getNavLists(navigation, setOpen, location)}
+          {!subscriptionPage && getNavLists(setOpen, location)}
           {subscriptionPage && getNav(setOpen, logout)}
         </Drawer>
       </React.Fragment>
@@ -62,29 +49,41 @@ export default function NavigationDrawer({ open, setOpen, subscriptionPage }) {
   );
 }
 
-const getNavLists = ({ navigation, setOpen, location }) => (
-  <Box
-    sx={{ width: 250 }}
-    role="presentation"
-    onClick={() => setOpen(false)}
-    onKeyDown={() => setOpen(false)}
-  >
-    {/* onClick={() => { if (route.path === "/location") { sessionStorage.setItem("path", "/location") } }} */}
-    <List>
-      {navigation.map((route) => (
-        <CustomLink
-          to={route.path}
-          isActive={location?.pathname === route.path ? "active" : ""}
-        >
-          <ListItem button key={route.name}>
-            <ListItemText primary={route.name} />
-          </ListItem>
-        </CustomLink>
-      ))}
-    </List>
-    <Divider />
-  </Box>
-);
+const getNavLists = ({ location, setOpen }) => {
+  const navigation = [
+    { name: "Home", path: "/" },
+    { name: "Business", path: "/business" },
+    { name: "Entertainment", path: "/entertainment" },
+    { name: "General", path: "/general" },
+    { name: "Health", path: "/health" },
+    { name: "Science", path: "/science" },
+    { name: "Sports", path: "/sports" },
+    { name: "Technology", path: "/technology" },
+    { name: "Logout", path: "/logout" },
+    // { name: "Register", path: "/register" },
+    // { name: "Login", path: "/login" },
+  ];
+  return (
+    <Box sx={{ width: 250 }} role="presentation">
+      {/* onClick={() => { if (route.path === "/location") { sessionStorage.setItem("path", "/location") } }} */}
+      <List>
+        {navigation?.map((route) => (
+          <CustomLink
+            to={route.path}
+            isActive={location?.pathname === route.path ? "active" : ""}
+            onClick={() => setOpen(false)}
+            onKeyDown={() => setOpen(false)}
+          >
+            <ListItem button key={route.name}>
+              <ListItemText primary={route.name} />
+            </ListItem>
+          </CustomLink>
+        ))}
+      </List>
+      <Divider />
+    </Box>
+  );
+};
 const getNav = ({ setOpen, logout }) => {
   return (
     <Box

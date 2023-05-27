@@ -140,6 +140,7 @@ const initialState = {
   details: {
     newsId: null,
     url: "",
+    data: null,
     summary: null,
     content: null,
   },
@@ -157,6 +158,9 @@ export const newsSlice = createSlice({
     },
     setURLAction(state, action) {
       state.details.url = action.payload;
+    },
+    setNewsDetailsDataAction(state, action) {
+      state.details.data = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -245,6 +249,7 @@ export const newsSlice = createSlice({
     });
   },
 });
-export const { setIdAction, setURLAction } = newsSlice.actions;
+export const { setIdAction, setURLAction, setNewsDetailsDataAction } =
+  newsSlice.actions;
 
 export default newsSlice.reducer;

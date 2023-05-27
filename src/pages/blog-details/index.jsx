@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getFullArticle, getNewsSummary } from "../../store/news";
 import parse from "html-react-parser";
 import { toast } from "react-hot-toast";
+import isEmpty from "../../utils/isEmpty";
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   paddingTop: theme.spacing(6),
@@ -21,38 +22,39 @@ const image =
 const BlogDetailsPage = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.news.isLoading);
+  const newsData = useSelector((state) => state.news?.details?.data);
   const newsId = useSelector((state) => state.news?.details?.newsId);
   const url = useSelector((state) => state.news?.details?.url);
   const summarizeText = useSelector((state) => state.news?.details?.summary);
   const fullContent = useSelector((state) => state.news?.details?.content);
-  let allNews = useSelector((state) => state.news?.latest?.articles);
-  let categoryNews = useSelector(
-    (state) => state.news?.newsByCategories?.articles
-  );
+  // let allNews = useSelector((state) => state.news?.latest?.articles);
+  // let categoryNews = useSelector(
+  //   (state) => state.news?.newsByCategories?.articles
+  // );
 
-  const filterByAll = allNews?.filter(
-    (article) => article?.title?.split(" ").join("-") === newsId
-  );
-  const filterByCategory = categoryNews?.filter(
-    (article) => article?.title?.split(" ").join("-") === newsId
-  );
+  // const filterByAll = allNews?.filter(
+  //   (article) => article?.title?.split(" ").join("-") === newsId
+  // );
+  // const filterByCategory = categoryNews?.filter(
+  //   (article) => article?.title?.split(" ").join("-") === newsId
+  // );
   let retryCount = 0;
   useEffect(() => {
     if (url && retryCount === 0) {
       dispatch(getFullArticle(url));
       retryCount++;
     }
-  }, [newsId, url, dispatch]);
+  }, [newsId, url, newsData, dispatch]);
 
-  useEffect(() => {
-    console.log("news");
-  }, [allNews, categoryNews, summarizeText]);
+  // useEffect(() => {
+  //   console.log("news");
+  // }, [allNews, categoryNews, summarizeText]);
 
   const [toggle, setToggle] = useState(false);
 
-  const getContent = (data) => {
+  const getContent = () => {
     const { urlToImage, title, description, author, publishedAt, content } =
-      data;
+      newsData;
     // let sanitizedContent;
     // if (fullContent) {
     //   sanitizedContent = DOMPurify.sanitize(fullContent);
@@ -135,10 +137,10 @@ const BlogDetailsPage = () => {
   }
   return (
     <StyledContainer maxWidth="md">
-      {filterByAll && filterByAll?.length > 0 && getContent(filterByAll[0])}
+      {/* {filterByAll && filterByAll?.length > 0 && getContent(filterByAll[0])}
       {filterByCategory &&
         filterByCategory?.length > 0 &&
-        getContent(filterByCategory[0])}
+        getContent(filterByCategory[0])} */}
 
       {/* {toggle && (
         <StyledPaper>
@@ -147,13 +149,17 @@ const BlogDetailsPage = () => {
           </Typography>
         </StyledPaper>
       )} */}
+      {!isEmpty(newsData) && getContent(newsData)}
       {toggle && summarizeText && (
-        <StyledPaper>
-          <Typography variant="body1" paragraph>
-            {/* {fullContent && getParsedText()} */}
-            {summarizeText}
-          </Typography>
-        </StyledPaper>
+        <>
+          <Typography variant="h4">Summary</Typography>
+          <StyledPaper>
+            <Typography variant="body1" paragraph>
+              {/* {fullContent && getParsedText()} */}
+              {summarizeText}
+            </Typography>
+          </StyledPaper>
+        </>
       )}
 
       <SummaryButton onClick={handleSummary} />

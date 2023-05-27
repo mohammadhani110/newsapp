@@ -1,12 +1,14 @@
 import React from "react";
 import { Grid, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Loader from "./Loader";
+import { setNewsDetailsDataAction } from "../store/news";
 
 const Sidebar = () => {
   const top = useSelector((state) => state.news?.top?.articles);
   const isLoading = useSelector((state) => state.news?.isLoadingSidebar);
+  const dispatch = useDispatch();
 
   if (isLoading) {
     return <Loader />;
@@ -20,6 +22,7 @@ const Sidebar = () => {
           <Grid item xs={12} key={article.title} mb={2}>
             <Link
               to={`/blog/${article.title.split(" ").join("-")}`}
+              onClick={() => dispatch(setNewsDetailsDataAction(article))}
               style={{ textDecoration: "none" }}
             >
               <Grid container alignItems="center" spacing={4}>
